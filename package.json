@@ -20,7 +20,8 @@
 	"dependencies": {},
 	"peerDependencies": {
 		"react": "*",
-		"react-native": "*"
+		"react-native": "*",
+		"react-native-webview": "*"
 	},
 	"repository": {
 		"type": "git",
