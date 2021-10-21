@@ -4,6 +4,7 @@ import { WebView } from 'react-native-webview';
 const setContentHeightObserverJsCode = `(${String(function () {
     window.setupObservers = function () {
         this.document.body.style.visibility = 'visible';
+
         const iframes = document.getElementsByTagName('iframe');
         let iframe = iframes[iframes.length - 1];
         if (
@@ -28,6 +29,8 @@ const setContentHeightObserverJsCode = `(${String(function () {
                 attributeFilter: ['style'],
             });
         }
+
+        window.ReactNativeWebView.postMessage("ready");
     };
     setTimeout(() => window.setupObservers(), 2000);
 })})();`;
@@ -46,11 +49,11 @@ const GoogleReCaptcha = ({ onMessage, siteKey, style, url, languageCode, contain
         const originalForm = `<!DOCTYPE html>
 			<html>
 			<head>
-				<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<meta http-equiv="X-UA-Compatible" content="ie=edge">
-				<script src="https://recaptcha.google.com/recaptcha/api.js?explicit&hl=${languageCode || 'en'}"></script>
+				<script src="https://www.google.com/recaptcha/api.js?hl=${languageCode || 'en'}" async defer></script>
 				<script type="text/javascript">
-					var onloadCallback = function () { };
 					var onDataCallback = function (response) { 
 						window.ReactNativeWebView.postMessage(response) 
 					};
@@ -62,13 +65,26 @@ const GoogleReCaptcha = ({ onMessage, siteKey, style, url, languageCode, contain
 						window.ReactNativeWebView.postMessage("error"); 
 					}
 				</script>
+                <style>
+                    body {
+                        visibility:hidden;
+                    }
+                    #captcha {
+                        text-align: center;
+                    }
+                    .g-recaptcha {
+                        display: inline-block;
+                    }
+                </style>
 			</head>
-			<body style="visibility:hidden;">
-				<div id="captcha" style="text-align: center">
-					<div class="g-recaptcha" style="display: inline-block;"
-						data-sitekey="${siteKey}" data-callback="onDataCallback"
+			<body>
+				<div id="captcha">
+					<div class="g-recaptcha"
+						data-sitekey="${siteKey}"
+                        data-callback="onDataCallback"
 						data-expired-callback="onDataExpiredCallback"
-						data-error-callback="onDataErrorCallback">
+						data-error-callback="onDataErrorCallback"
+                    >
 					</div>
 				</div>
 			</body>
