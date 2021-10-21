@@ -3,7 +3,7 @@
 	"version": "2.1.2",
 	"description": "Implement Google recaptcha v2 in React Native (both Android and iOS)",
 	"author": "prem-codemymobile",
-	"main": "index.tsx",
+	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},

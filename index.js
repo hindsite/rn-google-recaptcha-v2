@@ -1,6 +1,5 @@
 import React from 'react';
-import { ViewStyle } from 'react-native';
-import { WebView, WebViewMessageEvent } from 'react-native-webview';
+import { WebView } from 'react-native-webview';
 
 const setContentHeightObserverJsCode = `(${String(function () {
     window.setupObservers = function () {
@@ -33,23 +32,23 @@ const setContentHeightObserverJsCode = `(${String(function () {
     setTimeout(() => window.setupObservers(), 2000);
 })})();`;
 
-type TProps = {
-    onMessage: (event: WebViewMessageEvent) => void,
-    siteKey: string,
-    baseUrl: string,
-    languageCode: string, // can be found at https://developers.google.com/recaptcha/docs/language
-    style?: ViewStyle
-    containerStyle?: ViewStyle,
-}
-
-const GoogleReCaptcha: React.FC<TProps> = ({ onMessage, siteKey, style, baseUrl, languageCode, containerStyle }) => {
-    const generateTheWebViewContent = (siteKey: string): string => {
+/**
+ *
+ * @param {*} onMessage: callback after received response, error of Google captcha or when user cancel
+ * @param {*} siteKey: your site key of Google captcha
+ * @param {*} style: custom style
+ * @param {*} containerStyle: custom style
+ * @param {*} url: base url
+ * @param {*} languageCode: can be found at https://developers.google.com/recaptcha/docs/language
+ */
+const GoogleReCaptcha = ({ onMessage, siteKey, style, url, languageCode, containerStyle, ...props }) => {
+    const generateTheWebViewContent = siteKey => {
         const originalForm = `<!DOCTYPE html>
 			<html>
 			<head>
 				<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<meta http-equiv="X-UA-Compatible" content="ie=edge">
-				<script src="https://recaptcha.google.com/recaptcha/api.js?explicit&hl=${languageCode ||'en'}"></script>
+				<script src="https://recaptcha.google.com/recaptcha/api.js?explicit&hl=${languageCode || 'en'}"></script>
 				<script type="text/javascript">
 					var onloadCallback = function () { };
 					var onDataCallback = function (response) { 
@@ -76,7 +75,6 @@ const GoogleReCaptcha: React.FC<TProps> = ({ onMessage, siteKey, style, baseUrl,
 			</html>`;
         return originalForm;
     };
-
     return (
         <WebView
             originWhitelist={['*']}
@@ -89,10 +87,11 @@ const GoogleReCaptcha: React.FC<TProps> = ({ onMessage, siteKey, style, baseUrl,
             containerStyle={containerStyle}
             source={{
                 html: generateTheWebViewContent(siteKey),
-                baseUrl: `${baseUrl}`,
+                baseUrl: `${url}`,
             }}
+            {...props}
         />
-    )
+    );
 };
 
 export default GoogleReCaptcha;
