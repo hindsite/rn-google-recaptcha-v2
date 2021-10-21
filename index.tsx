@@ -1,6 +1,6 @@
 import React from 'react';
 import { ViewStyle } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { WebView, WebViewMessageEvent } from 'react-native-webview';
 
 const setContentHeightObserverJsCode = `(${String(function () {
     window.setupObservers = function () {
@@ -34,7 +34,7 @@ const setContentHeightObserverJsCode = `(${String(function () {
 })})();`;
 
 type TProps = {
-    onMessage: () => void,
+    onMessage: (event: WebViewMessageEvent) => void,
     siteKey: string,
     baseUrl: string,
     languageCode: string, // can be found at https://developers.google.com/recaptcha/docs/language
